@@ -13,6 +13,8 @@ class YoutubeBlock extends BaseElement
     private static $plural_name = 'YouTubes';
 
     private static $db = [
+        'ContentType' => 'Enum("videos,channel_info", "videos")',
+        'VideoLimit' => 'Int',
         // 'BlockTitle' => 'Varchar',
         // 'BlockSubTitle' => 'Varchar',
         // 'BlockText' => 'HTMLText',
@@ -38,7 +40,10 @@ class YoutubeBlock extends BaseElement
     // private static $defaults = [];
 
     // private static $summary_fields = [];
-    // private static $field_labels = [];
+    private static $field_labels = [
+        'ContentType' => 'Type',
+        'VideoLimit' => 'Video limit',
+    ];
     // private static $searchable_fields = [];
 
     // private static $cascade_deletes = [];
@@ -46,7 +51,7 @@ class YoutubeBlock extends BaseElement
 
     // * goldfinch/helpers
     // private static $field_descriptions = [];
-    // private static $required_fields = [];
+    private static $required_fields = [];
 
     public function getCMSFields()
     {

@@ -20,7 +20,7 @@ class YoutubeAdmin extends ModelAdmin
 
     private static $managed_models = [
         YoutubeVideo::class => [
-            'title'=> 'Questions',
+            'title'=> 'Videos',
         ],
         YoutubeBlock::class => [
             'title'=> 'Blocks',

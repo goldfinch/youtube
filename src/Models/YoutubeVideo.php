@@ -2,7 +2,12 @@
 
 namespace Goldfinch\Youtube\Models;
 
+use Carbon\Carbon;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\View\ArrayData;
+use SilverStripe\ORM\FieldType\DBHTMLText;
+use PhpTek\JSONText\ORM\FieldType\JSONText;
+use Goldfinch\Youtube\Configs\YoutubeConfig;
 
 class YoutubeVideo extends DataObject
 {
@@ -10,7 +15,16 @@ class YoutubeVideo extends DataObject
     private static $singular_name = 'youtube';
     private static $plural_name = 'youtubes';
 
-    private static $db = [];
+    private static $db = [
+      'VideoID' => 'Varchar',
+      'PublishDate' => 'Datetime',
+      'Data' => JSONText::class,
+    ];
+
+    private static $summary_fields = [
+        'summaryThumbnail' => 'Image',
+        'postDateAgo' => 'Published at',
+    ];
 
     // private static $many_many = [];
     // private static $many_many_extraFields = [];
@@ -33,6 +47,70 @@ class YoutubeVideo extends DataObject
     // * goldfinch/helpers
     private static $field_descriptions = [];
     private static $required_fields = [];
+
+    private static $default_sort = 'PublishDate DESC';
+
+    public function summaryThumbnail()
+    {
+        $img = $this->videoImage();
+
+        $link = '<a onclick="window.open(\''.$this->videoLink().'\');" href="'.$this->videoLink().'" target="_blank">';
+
+        if ($img)
+        {
+            $img = $link . '<img class="action-menu__toggle" src="'. $img. '" alt="Post image" width="140" height="140" style="object-fit: cover" /></a>';
+        }
+        else
+        {
+            $img = $link . '(no image)</a>';
+        }
+
+        $html = DBHTMLText::create();
+        $html->setValue($img);
+
+        return $html;
+    }
+
+    public function postDateAgo()
+    {
+        $dr = $this->videoData();
+
+        return '-'; // TODO: Carbon::parse($dr->timestamp)->timezone(date_default_timezone_get())->diffForHumans();
+    }
+
+    public function videoData()
+    {
+        return new ArrayData($this->dbObject('Data')->getStoreAsArray());
+    }
+
+    public function videoLink()
+    {
+        $dr = $this->videoData();
+
+        return '#'; // TODO: $dr->permalink;
+    }
+
+    public function videoImage()
+    {
+        $dr = $this->videoData();
+
+        $cfg = YoutubeConfig::current_config();
+
+        $return = '#'; // TODO: $dr->full_picture;
+
+        if($return && is_array(@getimagesize($return)))
+        {
+            return $return;
+        }
+        else if($cfg->DefaultVideoImage()->exists())
+        {
+            return $cfg->DefaultVideoImage()->getURL();
+        }
+        else
+        {
+            return null;
+        }
+    }
 
     public function getCMSFields()
     {
