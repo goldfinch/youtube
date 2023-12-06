@@ -145,6 +145,13 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
         }
     }
 
+    public function channelLink()
+    {
+        $dr = $this->channelData();
+
+        return 'https://youtube.com/' . $dr->snippet->customUrl;
+    }
+
     protected function nestEncryptedData(FieldList &$fields)
     {
         foreach($this::$db as $name => $type)

@@ -8,7 +8,7 @@
       <ul>
         <li>Title: $cfg.channelData.snippet.title</li>
         <li>Description: $cfg.channelData.snippet.description</li>
-        <li>Custom url: $cfg.channelData.snippet.customUrl</li>
+        <li>Custom url: <a href="$cfg.channelLink" target="_blank">$cfg.channelData.snippet.customUrl</a></li>
       </ul>
       <h4>Statistics</h4>
       <ul>
