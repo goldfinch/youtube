@@ -42,6 +42,18 @@ class Youtube extends ViewableData
         return $this->customise(['cfg' => $cfg, 'limit' => $limit])->renderWith('Views/YoutubeFeed');
     }
 
+    public function YoutubeChannel($limit = null)
+    {
+        if (!$this->authorized('YoutubeAPI'))
+        {
+            return;
+        }
+
+        $cfg = $this->getCfg();
+
+        return $this->customise(['cfg' => $cfg])->renderWith('Views/YoutubeChannel');
+    }
+
     public function forTemplate()
     {
         if (!$this->authorized('YoutubeAPI'))

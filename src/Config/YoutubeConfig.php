@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use SilverStripe\Assets\Image;
 use JonoM\SomeConfig\SomeConfig;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use LeKoala\Encrypt\EncryptHelper;
@@ -15,6 +16,7 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DatetimeField;
 use SilverStripe\Forms\CompositeField;
+use PhpTek\JSONText\ORM\FieldType\JSONText;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 use SilverStripe\View\TemplateGlobalProvider;
 use SilverStripe\AssetAdmin\Forms\UploadField;
@@ -34,6 +36,7 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
         'ClientID' => EncryptedDBText::class,
         'ClientSecret' => EncryptedDBText::class,
         'YoutubeAPILastSync' => 'Datetime',
+        'ChannelData' => JSONText::class,
     ];
 
     private static $has_one = [
@@ -59,6 +62,7 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
             'ClientID',
             'ClientSecret',
             'YoutubeAPILastSync',
+            'ChannelData',
         ]);
 
         $fields->addFieldsToTab(
@@ -108,6 +112,37 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
         $this->nestEncryptedData($fields);
 
         return $fields;
+    }
+
+    public function channelData($full = false)
+    {
+        $data = $this->dbObject('ChannelData')->getStoreAsArray();
+
+        if (!$full)
+        {
+            $data = $data['items'][0];
+        }
+
+        return new ArrayData($data);
+    }
+
+    /**
+     * $thumb (default 88x88 | medium 240x240 | high 800x800)
+     */
+    public function channelImage($thumb = 'default')
+    {
+        $dr = $this->channelData();
+
+        $return = $dr->snippet->thumbnails->{$thumb}->url;
+
+        if($return && is_array(@getimagesize($return)))
+        {
+            return $return;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     protected function nestEncryptedData(FieldList &$fields)

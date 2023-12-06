@@ -20,5 +20,6 @@ class YoutubeSyncBuildTask extends BuildTask
         $service = new Youtube;
 
         $service->YoutubeFeed();
+        $service->YoutubeChannel();
     }
 }

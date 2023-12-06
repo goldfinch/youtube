@@ -26,5 +26,6 @@ class YoutubeSyncCronTask implements CronTask
         $service = new Youtube;
 
         $service->YoutubeFeed();
+        $service->YoutubeChannel();
     }
 }

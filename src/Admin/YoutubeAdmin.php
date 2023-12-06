@@ -2,12 +2,14 @@
 
 namespace Goldfinch\Youtube\Admin;
 
-use Goldfinch\Youtube\Models\YoutubeVideo;
-use Goldfinch\Youtube\Blocks\YoutubeBlock;
-use Goldfinch\Youtube\Configs\YoutubeConfig;
 use SilverStripe\Admin\ModelAdmin;
 use JonoM\SomeConfig\SomeConfigAdmin;
+use Goldfinch\Youtube\Blocks\YoutubeBlock;
+use Goldfinch\Youtube\Models\YoutubeVideo;
+use Goldfinch\Youtube\Configs\YoutubeConfig;
 use SilverStripe\Forms\GridField\GridFieldConfig;
+use SilverStripe\Forms\GridField\GridFieldEditButton;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 
 class YoutubeAdmin extends ModelAdmin
 {
@@ -47,7 +49,11 @@ class YoutubeAdmin extends ModelAdmin
     {
         $config = parent::getGridFieldConfig();
 
-        // ..
+        if ($this->modelClass == YoutubeVideo::class)
+        {
+            $config->removeComponentsByType(GridFieldAddNewButton::class);
+            $config->removeComponentsByType(GridFieldEditButton::class);
+        }
 
         return $config;
     }

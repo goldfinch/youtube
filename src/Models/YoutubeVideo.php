@@ -23,7 +23,9 @@ class YoutubeVideo extends DataObject
 
     private static $summary_fields = [
         'summaryThumbnail' => 'Image',
-        'postDateAgo' => 'Published at',
+        'videoTitle' => 'Title',
+        'videoDescription' => 'Description',
+        'videoDateAgo' => 'Published at',
     ];
 
     // private static $many_many = [];
@@ -37,7 +39,6 @@ class YoutubeVideo extends DataObject
     // private static $indexes = null;
     // private static $casting = [];
     // private static $defaults = [];
-    // private static $summary_fields = [];
     // private static $field_labels = [];
     // private static $searchable_fields = [];
 
@@ -71,11 +72,32 @@ class YoutubeVideo extends DataObject
         return $html;
     }
 
-    public function postDateAgo()
+    public function videoTitle()
     {
         $dr = $this->videoData();
 
-        return '-'; // TODO: Carbon::parse($dr->timestamp)->timezone(date_default_timezone_get())->diffForHumans();
+        return $dr->snippet->title;
+    }
+
+    public function videoDescription()
+    {
+        $dr = $this->videoData();
+
+        return $dr->snippet->description;
+    }
+
+    public function videoDate($format = 'Y-m-d H:i:s')
+    {
+        $dr = $this->videoData();
+
+        return Carbon::parse($dr->snippet->publishedAt)->timezone(date_default_timezone_get())->format($format);
+    }
+
+    public function videoDateAgo()
+    {
+        $dr = $this->videoData();
+
+        return Carbon::parse($dr->snippet->publishedAt)->timezone(date_default_timezone_get())->diffForHumans();
     }
 
     public function videoData()
@@ -87,16 +109,19 @@ class YoutubeVideo extends DataObject
     {
         $dr = $this->videoData();
 
-        return '#'; // TODO: $dr->permalink;
+        return 'https://youtube.com/watch?v=' . $dr->id->videoId;
     }
 
-    public function videoImage()
+    /**
+     * $thumb (default 120x90 | medium 320x180 | high 480x360)
+     */
+    public function videoImage($thumb = 'default')
     {
         $dr = $this->videoData();
 
         $cfg = YoutubeConfig::current_config();
 
-        $return = '#'; // TODO: $dr->full_picture;
+        $return = $dr->snippet->thumbnails->{$thumb}->url;
 
         if($return && is_array(@getimagesize($return)))
         {

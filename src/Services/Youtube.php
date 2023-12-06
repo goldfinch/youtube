@@ -19,6 +19,13 @@ class Youtube
      * For more information about using OAuth 2.0 to access Google APIs, please see:
      * https://developers.google.com/youtube/v3/guides/authentication
      *
+     * Youtube Data API
+     * https://developers.google.com/youtube/v3/docs
+     *
+     * YouTube Data API (v3) - Quota Calculator
+     * https://developers.google.com/youtube/v3/determine_quota_cost
+     * projects that enable the YouTube Data API have a default quota allocation of 10,000 units per day
+     *
      */
 
     const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/';
@@ -53,6 +60,50 @@ class Youtube
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ],
         ];
+    }
+
+    public function YoutubeChannel()
+    {
+        if (!$this->cfg->YoutubeAPI)
+        {
+            return;
+        }
+
+        if (!$this->youtube['api_key'] || !$this->youtube['limit'] || !$this->youtube['channel_id'])
+        {
+            return $this->returnFailed('Missing configuration', 403);
+        }
+
+        try {
+            $response = $this->client->request('GET', self::YOUTUBE_API_URL . 'channels', [
+                'query' => [
+                    'id' => $this->youtube['channel_id'],
+                    'key' => $this->youtube['api_key'],
+                    'part' => 'snippet,contentDetails,statistics,topicDetails,status,brandingSettings,contentOwnerDetails,localizations',
+                ],
+                'headers' => $this->youtube['headers'],
+            ]);
+        }
+        catch (ClientException $e) {
+            $response = $e->getResponse();
+        }
+
+        if ($response->getStatusCode() >= 200  && $response->getStatusCode() < 300)
+        {
+            $data = json_decode($response->getBody(), true);
+
+            // ? Maybe need to be a separate field (with separate tasks)
+            $this->cfg->YoutubeAPILastSync = date('Y-m-d H:i:s');
+            $this->cfg->ChannelData = json_encode($data);
+            $this->cfg->write();
+
+            return $this->returnSuccess(true);
+
+        }
+        else
+        {
+            return $this->returnFailed($response, $response->getStatusCode());
+        }
     }
 
     public function YoutubeFeed()
