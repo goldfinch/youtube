@@ -101,7 +101,7 @@ class YoutubeVideo extends DataObject
     }
 
     public function videoData()
-    {dd($this->dbObject('Data'));
+    {
         return new ArrayData($this->dbObject('Data')->getStoreAsArray());
     }
 
