@@ -4,3 +4,16 @@ Name: goldfinch-youtube
 Goldfinch\Youtube\Admin\YoutubeAdmin:
   extensions:
     - Goldfinch\Helpers\Extensions\BlocksAdminExtension
+
+---
+Name: goldfinch-youtube-icon
+Only:
+  moduleexists: 'goldfinch/enchantment'
+---
+
+Goldfinch\Youtube\Admin\YoutubeAdmin:
+  menu_icon_class: 'bi-youtube'
+
+Goldfinch\Youtube\Blocks\YoutubeBlock:
+  icon: 'bi-youtube'
+

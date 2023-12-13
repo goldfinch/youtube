@@ -17,7 +17,7 @@ class YoutubeAdmin extends ModelAdmin
 
     private static $url_segment = 'youtube';
     private static $menu_title = 'YouTube';
-    private static $menu_icon_class = 'bi-youtube';
+    private static $menu_icon_class = 'font-icon-block-video';
     // private static $menu_priority = -0.5;
 
     private static $managed_models = [
