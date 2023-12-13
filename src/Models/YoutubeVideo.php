@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\View\ArrayData;
 use SilverStripe\ORM\FieldType\DBHTMLText;
-use PhpTek\JSONText\ORM\FieldType\JSONText;
+use Goldfinch\JSONEditor\ORM\FieldType\DBJSONText;
 use Goldfinch\Youtube\Configs\YoutubeConfig;
 
 class YoutubeVideo extends DataObject
@@ -18,7 +18,7 @@ class YoutubeVideo extends DataObject
     private static $db = [
       'VideoID' => 'Varchar',
       'PublishDate' => 'Datetime',
-      'Data' => JSONText::class,
+      'Data' => DBJSONText::class,
     ];
 
     private static $summary_fields = [

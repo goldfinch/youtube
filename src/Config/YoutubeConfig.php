@@ -16,7 +16,7 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DatetimeField;
 use SilverStripe\Forms\CompositeField;
-use PhpTek\JSONText\ORM\FieldType\JSONText;
+use Goldfinch\JSONEditor\ORM\FieldType\DBJSONText;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 use SilverStripe\View\TemplateGlobalProvider;
 use SilverStripe\AssetAdmin\Forms\UploadField;
@@ -36,7 +36,7 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
         'ClientID' => EncryptedDBText::class,
         'ClientSecret' => EncryptedDBText::class,
         'YoutubeAPILastSync' => 'Datetime',
-        'ChannelData' => JSONText::class,
+        'ChannelData' => DBJSONText::class,
     ];
 
     private static $has_one = [
