@@ -14,7 +14,7 @@
         "silverstripe/framework": "^5.0",
         "silverstripe/admin": "^2.0",
         "goldfinch/helpers": "^1.0",
-        "goldfinch/json-editor": "^1.0",
+        "goldfinch/silverstripe-jsontext": "^2.1",
         "silverstripe/crontask": "^3.0",
         "lekoala/silverstripe-encrypt": "dev-master",
         "unclecheese/display-logic": "^3.0",
