@@ -108,6 +108,8 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
           ]
         );
 
+        $fields->dataFieldByName('DefaultVideoImage')->setFolderName('youtube');
+
         // Set Encrypted Data
         $this->nestEncryptedData($fields);
 
