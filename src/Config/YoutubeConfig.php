@@ -37,6 +37,7 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
         'ClientSecret' => EncryptedDBText::class,
         'YoutubeAPILastSync' => 'Datetime',
         'ChannelData' => JSONText::class,
+        'SaveImageToAssets' => 'Boolean',
     ];
 
     private static $has_one = [
@@ -63,6 +64,7 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
             'ClientSecret',
             'YoutubeAPILastSync',
             'ChannelData',
+            'SaveImageToAssets',
         ]);
 
         $fields->addFieldsToTab(
@@ -75,6 +77,7 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
 
             CompositeField::create(
 
+              CheckboxField::create('SaveImageToAssets', 'Save image to assets'),
               CheckboxField::create('YoutubeAPI', 'Youtube API'),
               Wrapper::create(
 

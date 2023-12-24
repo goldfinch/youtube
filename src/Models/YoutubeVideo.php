@@ -8,6 +8,7 @@ use SilverStripe\View\ArrayData;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use PhpTek\JSONText\ORM\FieldType\JSONText;
 use Goldfinch\Youtube\Configs\YoutubeConfig;
+use SilverStripe\Assets\Image;
 
 class YoutubeVideo extends DataObject
 {
@@ -30,8 +31,12 @@ class YoutubeVideo extends DataObject
 
     // private static $many_many = [];
     // private static $many_many_extraFields = [];
-    // private static $owns = [];
-    // private static $has_one = [];
+    private static $owns = [
+        'Image',
+    ];
+    private static $has_one = [
+        'Image' => Image::class,
+    ];
     // private static $belongs_to = [];
     // private static $has_many = [];
     // private static $belongs_many_many = [];
@@ -123,17 +128,46 @@ class YoutubeVideo extends DataObject
 
         $return = $dr->snippet->thumbnails->{$thumb}->url;
 
-        if($return && is_array(@getimagesize($return)))
+        if ($cfg->SaveImageToAssets)
         {
-            return $return;
-        }
-        else if($cfg->DefaultVideoImage()->exists())
-        {
-            return $cfg->DefaultVideoImage()->getURL();
+            if ($this->Image()->exists())
+            {
+                return $this->Image()->getURL();
+            }
+            else
+            {
+                $fileName = base64_encode(hash('sha256', $return, true));
+                $fileName = strtr($fileName, '+/', '-_');
+                $fileName = rtrim($fileName, '=');
+                $fileName = substr($fileName, 0, 16);
+
+                $ext = last(explode('.', $return));
+                $fileName .= '.' . $ext;
+
+                $image = new Image();
+                $image->setFromString(file_get_contents($return), $fileName);
+                $imageID = $image->write();
+
+                $this->ImageID = $imageID;
+                $this->write();
+
+                return $image->getURL();
+            }
         }
         else
         {
-            return null;
+            if($return && is_array(@getimagesize($return)))
+            {
+                return $return;
+            }
+            else if($cfg->DefaultVideoImage()->exists())
+            {
+                return $cfg->DefaultVideoImage()->getURL();
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 
