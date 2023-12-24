@@ -126,6 +126,7 @@ class Youtube
                     'maxResults' => $this->youtube['limit'],
                     'part' => 'snippet,id',
                     'order' => 'date',
+                    'pageToken' => isset($_GET['pageToken']) ? $_GET['pageToken'] : null,
                 ],
                 'headers' => $this->youtube['headers'],
             ]);
@@ -146,6 +147,11 @@ class Youtube
             // $data['pageInfo']['resultsPerPage]
             // $data['nextPageToken']
 
+            if (isset($data['nextPageToken']))
+            {
+                print_r('<div><a href="/dev/tasks/YoutubeSync?pageToken=' . $data['nextPageToken'] . '">Sync next page videos</a></div><br>');
+            }
+
             foreach ($data['items'] as $item)
             {
                 $this->syncPost($item, 'video');
@@ -162,27 +168,30 @@ class Youtube
 
     private function syncPost($item, $type)
     {
-        $video = YoutubeVideo::get()->filter([
-          'VideoID' => $item['id']['videoId'],
-        ])->first();
+        if (isset($item['id']) && isset($item['id']['videoId']))
+        {
+            $video = YoutubeVideo::get()->filter([
+              'VideoID' => $item['id']['videoId'],
+            ])->first();
 
-        if ($video)
-        {
-            $video->Data = json_encode($item);
-            $video->write();
-        }
-        else
-        {
-            if ($type == 'video')
+            if ($video)
             {
-                $date = Carbon::parse($item['snippet']['publishedAt']);
+                $video->Data = json_encode($item);
+                $video->write();
             }
+            else
+            {
+                if ($type == 'video')
+                {
+                    $date = Carbon::parse($item['snippet']['publishedAt']);
+                }
 
-            $video = new YoutubeVideo;
-            $video->VideoID = $item['id']['videoId'];
-            $video->PublishDate = $date->format('Y-m-d H:i:s');
-            $video->Data = json_encode($item);
-            $video->write();
+                $video = new YoutubeVideo;
+                $video->VideoID = $item['id']['videoId'];
+                $video->PublishDate = $date->format('Y-m-d H:i:s');
+                $video->Data = json_encode($item);
+                $video->write();
+            }
         }
     }
 
