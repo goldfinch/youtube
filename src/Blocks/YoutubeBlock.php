@@ -31,7 +31,11 @@ class YoutubeBlock extends BaseElement
     {
         $fields = parent::getCMSFields();
 
-        $fields->dataFieldByName('VideoLimit')->displayIf('ContentType')->isEqualTo('videos')->end();
+        $fields
+            ->dataFieldByName('VideoLimit')
+            ->displayIf('ContentType')
+            ->isEqualTo('videos')
+            ->end();
 
         return $fields;
     }

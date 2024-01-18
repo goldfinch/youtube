@@ -64,32 +64,40 @@ class Youtube
 
     public function YoutubeChannel()
     {
-        if (!$this->cfg->YoutubeAPI)
-        {
+        if (!$this->cfg->YoutubeAPI) {
             return;
         }
 
-        if (!$this->youtube['api_key'] || !$this->youtube['limit'] || !$this->youtube['channel_id'])
-        {
+        if (
+            !$this->youtube['api_key'] ||
+            !$this->youtube['limit'] ||
+            !$this->youtube['channel_id']
+        ) {
             return $this->returnFailed('Missing configuration', 403);
         }
 
         try {
-            $response = $this->client->request('GET', self::YOUTUBE_API_URL . 'channels', [
-                'query' => [
-                    'id' => $this->youtube['channel_id'],
-                    'key' => $this->youtube['api_key'],
-                    'part' => 'snippet,contentDetails,statistics,topicDetails,status,brandingSettings,contentOwnerDetails,localizations',
+            $response = $this->client->request(
+                'GET',
+                self::YOUTUBE_API_URL . 'channels',
+                [
+                    'query' => [
+                        'id' => $this->youtube['channel_id'],
+                        'key' => $this->youtube['api_key'],
+                        'part' =>
+                            'snippet,contentDetails,statistics,topicDetails,status,brandingSettings,contentOwnerDetails,localizations',
+                    ],
+                    'headers' => $this->youtube['headers'],
                 ],
-                'headers' => $this->youtube['headers'],
-            ]);
-        }
-        catch (ClientException $e) {
+            );
+        } catch (ClientException $e) {
             $response = $e->getResponse();
         }
 
-        if ($response->getStatusCode() >= 200  && $response->getStatusCode() < 300)
-        {
+        if (
+            $response->getStatusCode() >= 200 &&
+            $response->getStatusCode() < 300
+        ) {
             $data = json_decode($response->getBody(), true);
 
             // ? Maybe need to be a separate field (with separate tasks)
@@ -98,45 +106,51 @@ class Youtube
             $this->cfg->write();
 
             return $this->returnSuccess(true);
-
-        }
-        else
-        {
+        } else {
             return $this->returnFailed($response, $response->getStatusCode());
         }
     }
 
     public function YoutubeFeed()
     {
-        if (!$this->cfg->YoutubeAPI)
-        {
+        if (!$this->cfg->YoutubeAPI) {
             return;
         }
 
-        if (!$this->youtube['api_key'] || !$this->youtube['limit'] || !$this->youtube['channel_id'])
-        {
+        if (
+            !$this->youtube['api_key'] ||
+            !$this->youtube['limit'] ||
+            !$this->youtube['channel_id']
+        ) {
             return $this->returnFailed('Missing configuration', 403);
         }
 
         try {
-            $response = $this->client->request('GET', self::YOUTUBE_API_URL . 'search', [
-                'query' => [
-                    'channelId' => $this->youtube['channel_id'],
-                    'key' => $this->youtube['api_key'],
-                    'maxResults' => $this->youtube['limit'],
-                    'part' => 'snippet,id',
-                    'order' => 'date',
-                    'pageToken' => isset($_GET['pageToken']) ? $_GET['pageToken'] : null,
+            $response = $this->client->request(
+                'GET',
+                self::YOUTUBE_API_URL . 'search',
+                [
+                    'query' => [
+                        'channelId' => $this->youtube['channel_id'],
+                        'key' => $this->youtube['api_key'],
+                        'maxResults' => $this->youtube['limit'],
+                        'part' => 'snippet,id',
+                        'order' => 'date',
+                        'pageToken' => isset($_GET['pageToken'])
+                            ? $_GET['pageToken']
+                            : null,
+                    ],
+                    'headers' => $this->youtube['headers'],
                 ],
-                'headers' => $this->youtube['headers'],
-            ]);
-        }
-        catch (ClientException $e) {
+            );
+        } catch (ClientException $e) {
             $response = $e->getResponse();
         }
 
-        if ($response->getStatusCode() >= 200  && $response->getStatusCode() < 300)
-        {
+        if (
+            $response->getStatusCode() >= 200 &&
+            $response->getStatusCode() < 300
+        ) {
             $data = json_decode($response->getBody(), true);
 
             $this->cfg->YoutubeAPILastSync = date('Y-m-d H:i:s');
@@ -147,46 +161,42 @@ class Youtube
             // $data['pageInfo']['resultsPerPage]
             // $data['nextPageToken']
 
-            if (isset($data['nextPageToken']))
-            {
-                print_r('<div><a href="/dev/tasks/YoutubeSync?pageToken=' . $data['nextPageToken'] . '">Sync next page videos</a></div><br>');
+            if (isset($data['nextPageToken'])) {
+                print_r(
+                    '<div><a href="/dev/tasks/YoutubeSync?pageToken=' .
+                        $data['nextPageToken'] .
+                        '">Sync next page videos</a></div><br>',
+                );
             }
 
-            foreach ($data['items'] as $item)
-            {
+            foreach ($data['items'] as $item) {
                 $this->syncPost($item, 'video');
             }
 
             return $this->returnSuccess(true);
-
-        }
-        else
-        {
+        } else {
             return $this->returnFailed($response, $response->getStatusCode());
         }
     }
 
     private function syncPost($item, $type)
     {
-        if (isset($item['id']) && isset($item['id']['videoId']))
-        {
-            $video = YoutubeVideo::get()->filter([
-              'VideoID' => $item['id']['videoId'],
-            ])->first();
+        if (isset($item['id']) && isset($item['id']['videoId'])) {
+            $video = YoutubeVideo::get()
+                ->filter([
+                    'VideoID' => $item['id']['videoId'],
+                ])
+                ->first();
 
-            if ($video)
-            {
+            if ($video) {
                 $video->Data = json_encode($item);
                 $video->write();
-            }
-            else
-            {
-                if ($type == 'video')
-                {
+            } else {
+                if ($type == 'video') {
                     $date = Carbon::parse($item['snippet']['publishedAt']);
                 }
 
-                $video = new YoutubeVideo;
+                $video = new YoutubeVideo();
                 $video->VideoID = $item['id']['videoId'];
                 $video->PublishDate = $date->format('Y-m-d H:i:s');
                 $video->Data = json_encode($item);
@@ -200,26 +210,26 @@ class Youtube
         print_r([
             'error' => false,
             'status_code' => $code,
-            'data' => $data
+            'data' => $data,
         ]);
     }
 
     private function returnFailed($message = null, $code = 500)
     {
-        if($message instanceof Response)
-        {
-            $message = json_decode($message->getBody()->getContents())->error->message;
+        if ($message instanceof Response) {
+            $message = json_decode($message->getBody()->getContents())->error
+                ->message;
             $code = 403;
-        }
-        else if(is_object($message))
-        {
+        } elseif (is_object($message)) {
             $code = $message->status();
         }
 
         print_r([
             'error' => true,
             'status_code' => $code,
-            'message' => ($message) ? $message['error']['message'] ?? $message : 'Unexpected error occurred'
+            'message' => $message
+                ? $message['error']['message'] ?? $message
+                : 'Unexpected error occurred',
         ]);
     }
 }

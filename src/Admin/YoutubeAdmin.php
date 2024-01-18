@@ -22,13 +22,13 @@ class YoutubeAdmin extends ModelAdmin
 
     private static $managed_models = [
         YoutubeVideo::class => [
-            'title'=> 'Videos',
+            'title' => 'Videos',
         ],
         YoutubeBlock::class => [
-            'title'=> 'Blocks',
+            'title' => 'Blocks',
         ],
         YoutubeConfig::class => [
-            'title'=> 'Settings',
+            'title' => 'Settings',
         ],
     ];
 
@@ -36,8 +36,7 @@ class YoutubeAdmin extends ModelAdmin
     {
         $config = parent::getGridFieldConfig();
 
-        if ($this->modelClass == YoutubeVideo::class)
-        {
+        if ($this->modelClass == YoutubeVideo::class) {
             $config->removeComponentsByType(GridFieldAddNewButton::class);
             $config->removeComponentsByType(GridFieldEditButton::class);
         }

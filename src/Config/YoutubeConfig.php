@@ -44,9 +44,7 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
         'DefaultVideoImage' => Image::class,
     ];
 
-    private static $owns = [
-        'DefaultVideoImage',
-    ];
+    private static $owns = ['DefaultVideoImage'];
 
     public function getCMSFields()
     {
@@ -65,49 +63,70 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
             'SaveImageToAssets',
         ]);
 
-        $fields->addFieldsToTab(
-          'Root.Main',
-          [
+        $fields->addFieldsToTab('Root.Main', [
             UploadField::create(
-              'DefaultVideoImage',
-              'Default video image',
-            )->setDescription('for videos that do not have an image, or by some reason return nothing'),
+                'DefaultVideoImage',
+                'Default video image',
+            )->setDescription(
+                'for videos that do not have an image, or by some reason return nothing',
+            ),
 
             CompositeField::create(
+                CheckboxField::create(
+                    'SaveImageToAssets',
+                    'Save image to assets',
+                ),
+                CheckboxField::create('YoutubeAPI', 'Youtube API'),
+                Wrapper::create(
+                    TextField::create('YoutubeLimit', 'Limit'),
+                    TextField::create('APIKey', 'API Key'),
+                    LiteralField::create(
+                        'APIKeyHelp',
+                        '<a href="https://console.cloud.google.com/apis/credentials" target="_blank">Where to get key?</a><br/><br/>',
+                    ),
+                    TextField::create('ChannelID', 'Channel ID'),
+                    LiteralField::create(
+                        'ChannelIDHelp',
+                        '<a href="https://commentpicker.com/youtube-channel-id.php" target="_blank">How to get ID?</a><br/><br/>',
+                    ),
 
-              CheckboxField::create('SaveImageToAssets', 'Save image to assets'),
-              CheckboxField::create('YoutubeAPI', 'Youtube API'),
-              Wrapper::create(
+                    FieldGroup::create(
+                        DatetimeField::create(
+                            'YoutubeAPILastSync',
+                            'Last Videos Sync',
+                        )->setReadonly(true),
+                        LiteralField::create(
+                            'YoutubeAPILastSync_Btn',
+                            '<a href="#" class="btn action btn-primary font-icon-sync" style="margin-bottom: 23px;height: 38px;padding-top: 8px;"><span class="btn__title">Sync</span></a>',
+                        ),
+                    )->setDescription(
+                        $this->YoutubeAPILastSync
+                            ? 'Videos synced ' .
+                                Carbon::parse(
+                                    $this->YoutubeAPILastSync,
+                                )->diffForHumans() .
+                                ''
+                            : '<div></div>',
+                    ),
 
-                  TextField::create('YoutubeLimit', 'Limit'),
-                  TextField::create('APIKey', 'API Key'),
-                  LiteralField::create('APIKeyHelp', '<a href="https://console.cloud.google.com/apis/credentials" target="_blank">Where to get key?</a><br/><br/>'),
-                  TextField::create('ChannelID', 'Channel ID'),
-                  LiteralField::create('ChannelIDHelp', '<a href="https://commentpicker.com/youtube-channel-id.php" target="_blank">How to get ID?</a><br/><br/>'),
-
-                  FieldGroup::create(
-
-                    DatetimeField::create('YoutubeAPILastSync', 'Last Videos Sync')->setReadonly(true),
-                    LiteralField::create('YoutubeAPILastSync_Btn', '<a href="#" class="btn action btn-primary font-icon-sync" style="margin-bottom: 23px;height: 38px;padding-top: 8px;"><span class="btn__title">Sync</span></a>'),
-
-                  )->setDescription(
-                    ($this->YoutubeAPILastSync ? ('Videos synced ' . Carbon::parse($this->YoutubeAPILastSync)->diffForHumans() . '') : '<div></div>')
-                  ),
-
-                  CheckboxField::create('YoutubeOAuth2', 'OAuth 2.0'),
-                  Wrapper::create(
-
-                      LiteralField::create('YoutubeOAuth2Help', '<a href="https://developers.google.com/youtube/v3/guides/authentication" target="_blank">Implementing OAuth 2.0 Authorization</a><br/><br/>'),
-                      TextField::create('ClientID', 'Client ID'),
-                      TextField::create('ClientSecret', 'Client Secret'),
-
-                  )->displayIf('YoutubeOAuth2')->isChecked()->end(),
-
-              )->displayIf('YoutubeAPI')->isChecked()->end(),
-
+                    CheckboxField::create('YoutubeOAuth2', 'OAuth 2.0'),
+                    Wrapper::create(
+                        LiteralField::create(
+                            'YoutubeOAuth2Help',
+                            '<a href="https://developers.google.com/youtube/v3/guides/authentication" target="_blank">Implementing OAuth 2.0 Authorization</a><br/><br/>',
+                        ),
+                        TextField::create('ClientID', 'Client ID'),
+                        TextField::create('ClientSecret', 'Client Secret'),
+                    )
+                        ->displayIf('YoutubeOAuth2')
+                        ->isChecked()
+                        ->end(),
+                )
+                    ->displayIf('YoutubeAPI')
+                    ->isChecked()
+                    ->end(),
             ),
-          ]
-        );
+        ]);
 
         $fields->dataFieldByName('DefaultVideoImage')->setFolderName('youtube');
 
@@ -121,8 +140,7 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
     {
         $data = $this->dbObject('ChannelData')->getStoreAsArray();
 
-        if (!$full)
-        {
+        if (!$full) {
             $data = $data['items'][0];
         }
 
@@ -138,12 +156,9 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
 
         $return = $dr->snippet->thumbnails->{$thumb}->url;
 
-        if($return && is_array(@getimagesize($return)))
-        {
+        if ($return && is_array(@getimagesize($return))) {
             return $return;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
@@ -157,10 +172,10 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
 
     protected function nestEncryptedData(FieldList &$fields)
     {
-        foreach($this::$db as $name => $type)
-        {
-            if (EncryptHelper::isEncryptedField(get_class($this->owner), $name))
-            {
+        foreach ($this::$db as $name => $type) {
+            if (
+                EncryptHelper::isEncryptedField(get_class($this->owner), $name)
+            ) {
                 $this->$name = $this->dbObject($name)->getValue();
             }
         }

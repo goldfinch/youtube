@@ -14,7 +14,7 @@ class YoutubeSyncCronTask implements CronTask
      */
     public function getSchedule()
     {
-        return "*/60 * * * *";
+        return '*/60 * * * *';
     }
 
     /**
@@ -23,7 +23,7 @@ class YoutubeSyncCronTask implements CronTask
      */
     public function process()
     {
-        $service = new Youtube;
+        $service = new Youtube();
 
         $service->YoutubeFeed();
         $service->YoutubeChannel();

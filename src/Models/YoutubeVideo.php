@@ -17,9 +17,9 @@ class YoutubeVideo extends DataObject
     private static $plural_name = 'youtubes';
 
     private static $db = [
-      'VideoID' => 'Varchar',
-      'PublishDate' => 'Datetime',
-      'Data' => JSONText::class,
+        'VideoID' => 'Varchar',
+        'PublishDate' => 'Datetime',
+        'Data' => JSONText::class,
     ];
 
     private static $summary_fields = [
@@ -29,9 +29,7 @@ class YoutubeVideo extends DataObject
         'videoDateAgo' => 'Published at',
     ];
 
-    private static $owns = [
-        'Image',
-    ];
+    private static $owns = ['Image'];
 
     private static $has_one = [
         'Image' => Image::class,
@@ -43,14 +41,20 @@ class YoutubeVideo extends DataObject
     {
         $img = $this->videoImage();
 
-        $link = '<a onclick="window.open(\''.$this->videoLink().'\');" href="'.$this->videoLink().'" target="_blank">';
+        $link =
+            '<a onclick="window.open(\'' .
+            $this->videoLink() .
+            '\');" href="' .
+            $this->videoLink() .
+            '" target="_blank">';
 
-        if ($img)
-        {
-            $img = $link . '<img class="action-menu__toggle" src="'. $img. '" alt="Post image" width="140" height="140" style="object-fit: cover" /></a>';
-        }
-        else
-        {
+        if ($img) {
+            $img =
+                $link .
+                '<img class="action-menu__toggle" src="' .
+                $img .
+                '" alt="Post image" width="140" height="140" style="object-fit: cover" /></a>';
+        } else {
             $img = $link . '(no image)</a>';
         }
 
@@ -78,14 +82,18 @@ class YoutubeVideo extends DataObject
     {
         $dr = $this->videoData();
 
-        return Carbon::parse($dr->snippet->publishedAt)->timezone(date_default_timezone_get())->format($format);
+        return Carbon::parse($dr->snippet->publishedAt)
+            ->timezone(date_default_timezone_get())
+            ->format($format);
     }
 
     public function videoDateAgo()
     {
         $dr = $this->videoData();
 
-        return Carbon::parse($dr->snippet->publishedAt)->timezone(date_default_timezone_get())->diffForHumans();
+        return Carbon::parse($dr->snippet->publishedAt)
+            ->timezone(date_default_timezone_get())
+            ->diffForHumans();
     }
 
     public function videoData()
@@ -111,14 +119,10 @@ class YoutubeVideo extends DataObject
 
         $return = $dr->snippet->thumbnails->{$thumb}->url;
 
-        if ($cfg->SaveImageToAssets)
-        {
-            if ($this->Image()->exists())
-            {
+        if ($cfg->SaveImageToAssets) {
+            if ($this->Image()->exists()) {
                 return $this->Image()->getURL();
-            }
-            else
-            {
+            } else {
                 $fileName = base64_encode(hash('sha256', $return, true));
                 $fileName = strtr($fileName, '+/', '-_');
                 $fileName = rtrim($fileName, '=');
@@ -136,19 +140,12 @@ class YoutubeVideo extends DataObject
 
                 return $image->getURL();
             }
-        }
-        else
-        {
-            if($return && is_array(@getimagesize($return)))
-            {
+        } else {
+            if ($return && is_array(@getimagesize($return))) {
                 return $return;
-            }
-            else if($cfg->DefaultVideoImage()->exists())
-            {
+            } elseif ($cfg->DefaultVideoImage()->exists()) {
                 return $cfg->DefaultVideoImage()->getURL();
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }

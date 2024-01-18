@@ -12,15 +12,13 @@ class YoutubeTemplateProvider implements TemplateGlobalProvider
      */
     public static function get_template_global_variables(): array
     {
-        return [
-            'YoutubeService'
-        ];
+        return ['YoutubeService'];
     }
 
     /**
      * @return boolean
      */
-    public static function YoutubeService() : Youtube
+    public static function YoutubeService(): Youtube
     {
         return Youtube::create();
     }

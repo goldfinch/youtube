@@ -10,13 +10,11 @@ class Youtube extends ViewableData
 {
     public function YoutubeVideos($limit = null)
     {
-        if (!$this->authorized('YoutubeAPI'))
-        {
+        if (!$this->authorized('YoutubeAPI')) {
             return;
         }
 
-        if ($limit === null || $limit === '')
-        {
+        if ($limit === null || $limit === '') {
             $cfg = $this->getCfg();
             $limit = $cfg->dbObject('YoutubeLimit')->getValue() ?? 10;
         }
@@ -26,37 +24,37 @@ class Youtube extends ViewableData
 
     public function YoutubeFeed($limit = null)
     {
-        if (!$this->authorized('YoutubeAPI'))
-        {
+        if (!$this->authorized('YoutubeAPI')) {
             return;
         }
 
         $cfg = $this->getCfg();
 
-        if ($limit === null || $limit === '')
-        {
+        if ($limit === null || $limit === '') {
             $limit = $cfg->dbObject('YoutubeLimit')->getValue() ?? 10;
         }
 
-        return $this->customise(['cfg' => $cfg, 'limit' => $limit])->renderWith('Views/YoutubeFeed');
+        return $this->customise(['cfg' => $cfg, 'limit' => $limit])->renderWith(
+            'Views/YoutubeFeed',
+        );
     }
 
     public function YoutubeChannel($limit = null)
     {
-        if (!$this->authorized('YoutubeAPI'))
-        {
+        if (!$this->authorized('YoutubeAPI')) {
             return;
         }
 
         $cfg = $this->getCfg();
 
-        return $this->customise(['cfg' => $cfg])->renderWith('Views/YoutubeChannel');
+        return $this->customise(['cfg' => $cfg])->renderWith(
+            'Views/YoutubeChannel',
+        );
     }
 
     public function forTemplate()
     {
-        if (!$this->authorized('YoutubeAPI'))
-        {
+        if (!$this->authorized('YoutubeAPI')) {
             return;
         }
 
@@ -67,8 +65,7 @@ class Youtube extends ViewableData
     {
         $cfg = YoutubeConfig::current_config();
 
-        if ($cfg->$state)
-        {
+        if ($cfg->$state) {
             return true;
         }
 

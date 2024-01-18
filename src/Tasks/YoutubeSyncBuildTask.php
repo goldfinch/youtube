@@ -17,7 +17,7 @@ class YoutubeSyncBuildTask extends BuildTask
 
     public function run($request)
     {
-        $service = new Youtube;
+        $service = new Youtube();
 
         $service->YoutubeFeed();
         $service->YoutubeChannel();
