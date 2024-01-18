@@ -48,8 +48,6 @@ class YoutubeConfig extends DataObject implements TemplateGlobalProvider
         'DefaultVideoImage',
     ];
 
-    private static $field_descriptions = [];
-
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();

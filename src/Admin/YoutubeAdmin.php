@@ -32,19 +32,6 @@ class YoutubeAdmin extends ModelAdmin
         ],
     ];
 
-    // public $showImportForm = true;
-    // public $showSearchForm = true;
-    // private static $page_length = 30;
-
-    public function getList()
-    {
-        $list = parent::getList();
-
-        // ..
-
-        return $list;
-    }
-
     protected function getGridFieldConfig(): GridFieldConfig
     {
         $config = parent::getGridFieldConfig();
@@ -57,30 +44,4 @@ class YoutubeAdmin extends ModelAdmin
 
         return $config;
     }
-
-    public function getSearchContext()
-    {
-        $context = parent::getSearchContext();
-
-        // ..
-
-        return $context;
-    }
-
-    public function getEditForm($id = null, $fields = null)
-    {
-        $form = parent::getEditForm($id, $fields);
-
-        // ..
-
-        return $form;
-    }
-
-    // public function getExportFields()
-    // {
-    //     return [
-    //         // 'Name' => 'Name',
-    //         // 'Category.Title' => 'Category'
-    //     ];
-    // }
 }

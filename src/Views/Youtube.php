@@ -3,7 +3,6 @@
 namespace Goldfinch\Youtube\Views;
 
 use SilverStripe\View\ViewableData;
-use SilverStripe\ORM\FieldType\DBHTMLText;
 use Goldfinch\Youtube\Models\YoutubeVideo;
 use Goldfinch\Youtube\Configs\YoutubeConfig;
 
