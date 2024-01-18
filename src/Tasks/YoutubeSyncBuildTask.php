@@ -2,8 +2,8 @@
 
 namespace Goldfinch\Youtube\Tasks;
 
-use Goldfinch\Youtube\Services\Youtube;
 use SilverStripe\Dev\BuildTask;
+use Goldfinch\Youtube\Services\Youtube;
 
 class YoutubeSyncBuildTask extends BuildTask
 {

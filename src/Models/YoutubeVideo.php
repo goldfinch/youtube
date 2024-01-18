@@ -3,12 +3,12 @@
 namespace Goldfinch\Youtube\Models;
 
 use Carbon\Carbon;
+use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\View\ArrayData;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use PhpTek\JSONText\ORM\FieldType\JSONText;
 use Goldfinch\Youtube\Configs\YoutubeConfig;
-use SilverStripe\Assets\Image;
 
 class YoutubeVideo extends DataObject
 {
