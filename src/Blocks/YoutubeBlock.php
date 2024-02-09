@@ -20,7 +20,7 @@ class YoutubeBlock extends BaseElement
     ];
 
     private static $inline_editable = false;
-    private static $description = '';
+    private static $description = 'YouTube block handler';
     private static $icon = 'font-icon-block-video';
 
     private static $field_labels = [

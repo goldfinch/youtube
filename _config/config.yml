@@ -4,6 +4,7 @@ Name: goldfinch-youtube
 Goldfinch\Youtube\Admin\YoutubeAdmin:
   extensions:
     - Goldfinch\Helpers\Extensions\BlocksAdminExtension
+
 Goldfinch\Youtube\Blocks\YoutubeBlock:
   extensions:
     - Goldfinch\Helpers\Extensions\BaseElementExtension
