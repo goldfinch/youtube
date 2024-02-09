@@ -17,9 +17,6 @@ class YoutubeBlock extends BaseElement
     private static $db = [
         'ContentType' => 'Enum("videos,channel_info", "videos")',
         'VideoLimit' => 'Int',
-        // 'BlockTitle' => 'Varchar',
-        // 'BlockSubTitle' => 'Varchar',
-        // 'BlockText' => 'HTMLText',
     ];
 
     private static $inline_editable = false;
@@ -31,24 +28,12 @@ class YoutubeBlock extends BaseElement
         'VideoLimit' => 'Video limit',
     ];
 
-    public function fielder(Fielder $fielder)
+    public function fielder(Fielder $fielder): void
     {
         $fielder
             ->datafield('VideoLimit')
             ->displayIf('ContentType')
             ->isEqualTo('videos')
             ->end();
-    }
-
-    public function getSummary()
-    {
-        return $this->getDescription();
-    }
-
-    public function getType()
-    {
-        $default = $this->i18n_singular_name() ?: 'Block';
-
-        return _t(__CLASS__ . '.BlockType', $default);
     }
 }
