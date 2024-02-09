@@ -2,10 +2,14 @@
 
 namespace Goldfinch\Youtube\Blocks;
 
+use Goldfinch\Fielder\Fielder;
+use Goldfinch\Fielder\Traits\FielderTrait;
 use DNADesign\Elemental\Models\BaseElement;
 
 class YoutubeBlock extends BaseElement
 {
+    use FielderTrait;
+
     private static $table_name = 'YoutubeBlock';
     private static $singular_name = 'YouTube';
     private static $plural_name = 'YouTubes';
@@ -27,17 +31,13 @@ class YoutubeBlock extends BaseElement
         'VideoLimit' => 'Video limit',
     ];
 
-    public function getCMSFields()
+    public function fielder(Fielder $fielder)
     {
-        $fields = parent::getCMSFields();
-
-        $fields
-            ->dataFieldByName('VideoLimit')
+        $fielder
+            ->datafield('VideoLimit')
             ->displayIf('ContentType')
             ->isEqualTo('videos')
             ->end();
-
-        return $fields;
     }
 
     public function getSummary()
