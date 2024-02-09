@@ -6,7 +6,7 @@ Goldfinch\Youtube\Admin\YoutubeAdmin:
     - Goldfinch\Helpers\Extensions\BlocksAdminExtension
 Goldfinch\Youtube\Blocks\YoutubeBlock:
   extensions:
-    - Goldfinch\Helpers\Extensions\BlocksAdminExtension
+    - Goldfinch\Helpers\Extensions\BaseElementExtension
 ---
 Name: goldfinch-youtube-icon
 Only:
