@@ -5,10 +5,11 @@ namespace Goldfinch\Youtube\Blocks;
 use Goldfinch\Fielder\Fielder;
 use Goldfinch\Fielder\Traits\FielderTrait;
 use DNADesign\Elemental\Models\BaseElement;
+use Goldfinch\Helpers\Traits\BaseElementTrait;
 
 class YoutubeBlock extends BaseElement
 {
-    use FielderTrait;
+    use FielderTrait, BaseElementTrait;
 
     private static $table_name = 'YoutubeBlock';
     private static $singular_name = 'YouTube';
