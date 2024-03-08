@@ -31,13 +31,15 @@ class YoutubeBlock extends BaseElement
     {
         $fields = parent::getCMSFields();
 
-        $fielder = $fields->fielder($this);
+        $fielder = $this->intFielder($fields)->getFielder();
 
-        $fielder
-            ->datafield('VideoLimit')
-            ->displayIf('ContentType')
-            ->isEqualTo('videos')
-            ->end();
+        if ($fielder && $fielder->datafield('VideoLimit')) {
+            $fielder
+                ->datafield('VideoLimit')
+                ->displayIf('ContentType')
+                ->isEqualTo('videos')
+                ->end();
+        }
 
         return $fields;
     }
